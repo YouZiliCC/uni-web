@@ -136,6 +136,13 @@ def project_detail(pid):
         + current_app.config.get("SERVER_DOMAIN", "localhost")
     )
 
+    # 获取仅教师评论设置
+    teacher_only_comment = get_system_setting("teacher_only_comment", "false") == "true"
+    # 判断当前用户是否可以评论
+    can_comment = True
+    if teacher_only_comment and current_user.is_authenticated:
+        can_comment = current_user.is_teacher or current_user.is_admin
+
     return render_template(
         "project/detail.html",
         project=project,
@@ -143,6 +150,8 @@ def project_detail(pid):
         star_count=star_count,
         user_starred=user_starred,
         external_url=external_url,
+        teacher_only_comment=teacher_only_comment,
+        can_comment=can_comment,
     )
 
 
@@ -213,6 +222,12 @@ def project_comment(pid):
     project = get_project_by_pid(pid)
     if not project:
         return jsonify({"success": False, "message": "项目不存在"}), 404
+
+    # 检查仅教师评论设置
+    from database.actions import get_system_setting
+    teacher_only = get_system_setting("teacher_only_comment", "false") == "true"
+    if teacher_only and not current_user.is_teacher and not current_user.is_admin:
+        return jsonify({"success": False, "message": "仅教师用户可以发表评论"}), 403
 
     # accept JSON or form-encoded content
     content = None
@@ -298,8 +313,8 @@ def project_comment_delete(pid, pcid):
     if not comment:
         return jsonify({"success": False, "message": "评论不存在"}), 404
 
-    # 只允许作者删除自己的评论
-    if str(comment.uid) != str(current_user.uid):
+    # 只允许作者/Admin删除评论
+    if str(comment.uid) != str(current_user.uid) and not current_user.is_admin:
         return jsonify({"success": False, "message": "无权删除此评论"}), 403
 
     # 删除评论
@@ -584,8 +599,3 @@ def project_docker_status(pid):
 
     # 默认视为已停止
     return jsonify({"success": True, "status": "stopped"}), 200
-
-
-# TODO: iframe 或者别的实现方法
-
-# TODO: terminal

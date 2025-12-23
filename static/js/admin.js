@@ -17,6 +17,9 @@
     const statGroups = document.getElementById('stat-groups');
     const statProjects = document.getElementById('stat-projects');
 
+    // 系统设置开关
+    const toggleTeacherOnlyComment = document.getElementById('toggle-teacher-only-comment');
+
     // 格式化描述文本：截断过长文本并添加省略号
     function formatDescription(text, maxLength = 50) {
         if (!text) return '<span class="text-gray-400 dark:text-gray-500">无</span>';
@@ -291,6 +294,77 @@
         if (pendingAction) pendingAction();
     });
 
-    // 页面加载时获取统计数据
+    // 系统设置相关函数
+    function updateToggleUI(toggleBtn, isEnabled) {
+        if (!toggleBtn) return;
+        const span = toggleBtn.querySelector('span:last-child');
+        if (isEnabled) {
+            toggleBtn.classList.remove('bg-gray-200', 'dark:bg-gray-600');
+            toggleBtn.classList.add('bg-primary-600');
+            toggleBtn.setAttribute('aria-checked', 'true');
+            if (span) span.classList.replace('translate-x-0', 'translate-x-5');
+        } else {
+            toggleBtn.classList.remove('bg-primary-600');
+            toggleBtn.classList.add('bg-gray-200', 'dark:bg-gray-600');
+            toggleBtn.setAttribute('aria-checked', 'false');
+            if (span) span.classList.replace('translate-x-5', 'translate-x-0');
+        }
+    }
+
+    async function loadSettings() {
+        try {
+            const res = await fetch('/admin/settings', { credentials: 'same-origin' });
+            if (!res.ok) throw new Error('获取设置失败');
+            const data = await res.json();
+            
+            // 更新开关状态
+            const isTeacherOnly = data.teacher_only_comment === 'true' || data.teacher_only_comment === true;
+            updateToggleUI(toggleTeacherOnlyComment, isTeacherOnly);
+        } catch (e) {
+            console.error('加载设置失败:', e);
+        }
+    }
+
+    async function updateSetting(key, value) {
+        try {
+            const token = document.querySelector('meta[name="csrf-token"]')?.content;
+            const res = await fetch('/admin/settings', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': token
+                },
+                body: JSON.stringify({ [key]: value })
+            });
+            if (!res.ok) throw new Error('更新设置失败');
+            showFlash('设置已更新', 'success');
+            return true;
+        } catch (e) {
+            showFlash('更新设置失败：' + e.message, 'danger');
+            return false;
+        }
+    }
+
+    // 绑定开关事件
+    if (toggleTeacherOnlyComment) {
+        toggleTeacherOnlyComment.addEventListener('click', async () => {
+            const currentState = toggleTeacherOnlyComment.getAttribute('aria-checked') === 'true';
+            const newState = !currentState;
+            
+            // 先更新UI
+            updateToggleUI(toggleTeacherOnlyComment, newState);
+            
+            // 发送请求
+            const success = await updateSetting('teacher_only_comment', newState);
+            if (!success) {
+                // 失败时恢复原状态
+                updateToggleUI(toggleTeacherOnlyComment, currentState);
+            }
+        });
+    }
+
+    // 页面加载时获取统计数据和设置
     loadStats();
+    loadSettings();
 })();

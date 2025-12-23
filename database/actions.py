@@ -1,5 +1,5 @@
 from .base import db
-from .models import User, Project, Group, GroupApplication, ProjectStar, ProjectComment
+from .models import User, Project, Group, GroupApplication, ProjectStar, ProjectComment, SystemSetting
 from sqlalchemy import select
 import logging
 
@@ -927,3 +927,73 @@ def get_ordered_project_comments_by_pid(pid):
     except Exception as e:
         logger.error(f"get_ordered_project_comments_by_pid Failed: {e}", exc_info=True)
         return []
+
+
+# -------------------------------------------------------------------------------------------
+# SystemSetting CRUD 操作
+# -------------------------------------------------------------------------------------------
+def get_system_setting(key, default=None):
+    """
+    获取系统设置值。
+
+    参数:
+        key (str): 设置键名。
+        default: 默认值，如果设置不存在则返回此值。
+
+    返回:
+        str: 设置值，未找到则返回默认值。
+    """
+    try:
+        setting = db.session.execute(
+            select(SystemSetting).where(SystemSetting.key == key)
+        ).scalar_one_or_none()
+        return setting.value if setting else default
+    except Exception as e:
+        logger.error(f"get_system_setting Failed: {e}", exc_info=True)
+        return default
+
+
+def set_system_setting(key, value, description=None):
+    """
+    设置系统设置值（存在则更新，不存在则创建）。
+
+    参数:
+        key (str): 设置键名。
+        value (str): 设置值。
+        description (str): 设置描述（可选）。
+
+    返回:
+        bool: 操作是否成功。
+    """
+    try:
+        setting = db.session.execute(
+            select(SystemSetting).where(SystemSetting.key == key)
+        ).scalar_one_or_none()
+        if setting:
+            setting.value = value
+            if description is not None:
+                setting.description = description
+        else:
+            setting = SystemSetting(key=key, value=value, description=description)
+            db.session.add(setting)
+        return safe_commit()
+    except Exception as e:
+        logger.error(f"set_system_setting Failed: {e}", exc_info=True)
+        db.session.rollback()
+        return False
+
+
+def get_all_system_settings():
+    """
+    获取所有系统设置。
+
+    返回:
+        dict: 键值对形式的所有设置。
+    """
+    try:
+        settings = db.session.execute(select(SystemSetting)).scalars().all()
+        return {s.key: {"value": s.value, "description": s.description} for s in settings}
+    except Exception as e:
+        logger.error(f"get_all_system_settings Failed: {e}", exc_info=True)
+        return {}
+

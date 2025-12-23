@@ -200,6 +200,18 @@ class ProjectComment(db.Model, TimestampMixin):
         return f"<ProjectComment {self.user.uname} on {self.project.pname}>"
 
 
+class SystemSetting(db.Model):
+    # 系统设置表
+    __tablename__ = "system_settings"
+    # 字段
+    key = db.Column(db.String(256), primary_key=True)
+    value = db.Column(db.String(512), nullable=False, default="")
+    description = db.Column(db.String(512), nullable=True)
+
+    def __repr__(self):
+        return f"<SystemSetting {self.key}={self.value}>"
+
+
 # 用户加载回调函数(flask_login)
 @login_manager.user_loader
 def load_user(user_id: str):

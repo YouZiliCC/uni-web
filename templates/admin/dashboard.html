@@ -86,6 +86,35 @@
             </div>
         </div>
 
+        <!-- System Settings -->
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg mb-8">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">
+                    <i class="fa-solid fa-gear mr-2"></i> 系统设置
+                </h3>
+                <div class="space-y-4">
+                    <!-- Teacher Only Comment Toggle -->
+                    <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div class="flex-1">
+                            <h4 class="text-sm font-medium text-gray-900 dark:text-white">仅教师可评论</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">开启后，只有教师用户和管理员可以发表评论</p>
+                        </div>
+                        <div class="ml-4">
+                            <button type="button" 
+                                    id="toggle-teacher-only-comment"
+                                    class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 bg-gray-200 dark:bg-gray-600"
+                                    role="switch" 
+                                    aria-checked="false">
+                                <span class="sr-only">仅教师可评论</span>
+                                <span aria-hidden="true" 
+                                      class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-0"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Results Area -->
         <div id="admin-result" class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden min-h-[200px]">
             <div class="p-8 text-center text-gray-500 dark:text-gray-400">

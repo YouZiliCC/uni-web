@@ -208,13 +208,15 @@
                                                 <p class="text-xs text-gray-400 dark:text-gray-500">{{ c.created_at.strftime("%Y-%m-%d %H:%M") }}</p>
                                             </div>
                                             <div class="text-sm text-gray-700 dark:text-gray-300 comment-body break-all whitespace-pre-wrap leading-relaxed" data-original-content="{{ c.content | e }}">{{ c.content | e }}</div>
-                                            {% if current_user.is_authenticated and current_user.uid == c.uid %}
+                                            {% if current_user.is_authenticated and (current_user.uid == c.uid or current_user.is_admin) %}
                                                 <div class="flex space-x-2 mt-2">
+                                                    {% if current_user.uid == c.uid %}
                                                     <button class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
                                                             onclick="editComment('{{ c.pcid }}', '{{ project.pid }}')"
                                                             title="编辑">
                                                         <i class="fa-solid fa-pen text-xs"></i>
                                                     </button>
+                                                    {% endif %}
                                                     <button class="text-gray-400 hover:text-red-500 dark:hover:text-red-400"
                                                             onclick="deleteComment('{{ c.pcid }}', '{{ project.pid }}')"
                                                             title="删除">
@@ -287,6 +289,7 @@
                 
                 <div class="mt-2">
                     {% if current_user.is_authenticated %}
+                        {% if can_comment %}
                         <div class="space-y-4">
                             <div>
                                 <label for="comment-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">评论内容</label>
@@ -295,6 +298,16 @@
                                 </div>
                             </div>
                         </div>
+                        {% else %}
+                        <div class="text-center py-8">
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 mb-3">
+                                <i class="fa-solid fa-lock text-yellow-600 dark:text-yellow-400"></i>
+                            </div>
+                            <p class="text-gray-500 dark:text-gray-400">
+                                当前仅教师用户可以发表评论
+                            </p>
+                        </div>
+                        {% endif %}
                     {% else %}
                         <div class="text-center py-8">
                             <p class="text-gray-500 dark:text-gray-400">
@@ -305,7 +318,7 @@
                 </div>
             </div>
             
-            {% if current_user.is_authenticated %}
+            {% if current_user.is_authenticated and can_comment %}
             <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="postProjectComment('{{ project.pid }}')">
                     发表评论

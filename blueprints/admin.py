@@ -4,6 +4,7 @@ from flask import (
     render_template,
     flash,
     abort,
+    request,
 )
 from flask_login import login_required, current_user
 from functools import wraps
@@ -232,3 +233,51 @@ def del_project(pid):
 #         return jsonify({"error": "更新项目失败"}), 500
 #     flash("项目已更新", "success")
 #     return jsonify({"message": "项目更新成功"}), 200
+
+
+@admin_bp.route("/settings", methods=["GET"])
+@login_required
+@admin_required
+def get_settings():
+    """获取系统设置"""
+    settings = get_all_system_settings()
+    # 确保返回默认值
+    result = {
+        "teacher_only_comment": settings.get("teacher_only_comment", {}).get("value", "false"),
+    }
+    return jsonify(result), 200
+
+
+@admin_bp.route("/settings", methods=["POST"])
+@login_required
+@admin_required
+def update_settings():
+    """更新系统设置"""
+    data = request.get_json(silent=True) or {}
+    
+    # 更新仅教师评论设置
+    if "teacher_only_comment" in data:
+        value = "true" if data["teacher_only_comment"] in [True, "true", "1", 1] else "false"
+        if not set_system_setting("teacher_only_comment", value, "是否仅允许教师用户评论"):
+            return jsonify({"error": "更新设置失败"}), 500
+    
+    flash("系统设置已更新", "success")
+    return jsonify({"message": "设置更新成功"}), 200
+
+
+@admin_bp.route("/del_comment/<pcid>", methods=["POST"])
+@login_required
+@admin_required
+def del_comment(pcid):
+    """删除评论"""
+    from database.actions import get_comment_by_pcid, delete_project_comment
+    
+    comment = get_comment_by_pcid(pcid)
+    if not comment:
+        return jsonify({"error": "评论不存在"}), 404
+    
+    if not delete_project_comment(comment):
+        return jsonify({"error": "删除评论失败"}), 500
+    
+    flash("评论已删除", "success")
+    return jsonify({"message": "评论删除成功"}), 200
