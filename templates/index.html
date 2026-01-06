@@ -1,98 +1,186 @@
 {% extends "base.html" %}
 {% block title %}首页 - 数据库系统课程大作业展示平台{% endblock %}
 {% block content %}
-    <!-- Hero Section -->
-    <div class="relative bg-white dark:bg-gray-900 overflow-hidden">
-        <div class="max-w-7xl mx-auto">
-            <div class="relative z-10 pb-8 bg-white dark:bg-gray-900 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
-                <svg class="hidden lg:block absolute right-0 inset-y-0 h-full w-48 text-white dark:text-gray-900 transform translate-x-1/2" fill="currentColor" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                    <polygon points="0,0 100,0 50,100 0,100" />
-                </svg>
-
-                <main class="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
-                    <div class="sm:text-center lg:text-left">
-                        <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
-                            <span class="block xl:inline">WebApp项目</span>
-                            <br>
-                            <span class="block text-primary-600 dark:text-primary-400 xl:inline">部署展示平台</span>
-                        </h1>
-                        <p class="mt-3 text-base text-gray-500 dark:text-gray-400 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                            数据库系统课程大作业展示平台 是一个集成的项目管理与展示平台。在这里，你可以浏览优秀的学生作品，管理你的项目小组，并使用集成的 Web 终端进行开发与部署。
-                        </p>
-                        <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
-                            <div class="rounded-md shadow">
-                                <a href="/project" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 md:py-4 md:text-lg md:px-10 transition-colors">
-                                    浏览项目
-                                </a>
-                            </div>
-                            <div class="mt-3 sm:mt-0 sm:ml-3">
-                                <a href="/group" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-700 bg-primary-100 hover:bg-primary-200 md:py-4 md:text-lg md:px-10 transition-colors">
-                                    浏览工作组
-                                </a>
-                            </div>
-                        </div>
+    <!-- Hero Section with Gradient Background -->
+    <div class="relative overflow-hidden">
+        <!-- Background -->
+        <div class="absolute inset-0 bg-gradient-to-br from-primary-600 via-primary-700 to-indigo-800 dark:from-gray-900 dark:via-primary-900 dark:to-gray-900"></div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+            <div class="text-center">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight">
+                    <span class="block">探索学生创意</span>
+                    <span class="block mt-2 bg-clip-text text-transparent bg-gradient-to-r from-primary-200 to-white">发现优秀作品</span>
+                </h1>
+                <p class="mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-primary-100 dark:text-gray-300">
+                    数据库系统课程大作业展示平台 — 浏览、部署、分享你的 WebApp 项目
+                </p>
+                <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/project" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-xl text-primary-700 bg-white hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all duration-200">
+                        浏览全部项目
+                    </a>
+                    {% if not current_user.is_authenticated %}
+                    <a href="/auth/register" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-xl text-white border-2 border-white/30 hover:bg-white/10 backdrop-blur transition-all duration-200">
+                        立即注册
+                    </a>
+                    {% endif %}
+                </div>
+                
+                <!-- Stats -->
+                <div class="mt-16 grid grid-cols-3 gap-8 max-w-lg mx-auto">
+                    <div class="text-center">
+                        <div class="text-3xl sm:text-4xl font-bold text-white">{{ total_projects }}</div>
+                        <div class="mt-1 text-sm text-primary-200">个项目</div>
                     </div>
-                </main>
+                    <div class="text-center">
+                        <div class="text-3xl sm:text-4xl font-bold text-white"><i class="fa-brands fa-docker"></i></div>
+                        <div class="mt-1 text-sm text-primary-200">容器部署</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl sm:text-4xl font-bold text-white"><i class="fa-solid fa-terminal"></i></div>
+                        <div class="mt-1 text-sm text-primary-200">在线终端</div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 bg-gray-50 dark:bg-gray-800 flex items-center justify-center">
-            <div class="text-9xl text-primary-200 dark:text-primary-900 opacity-50">
-                <i class="fa-solid fa-network-wired"></i>
-            </div>
+        
+        <!-- Wave Divider -->
+        <div class="absolute bottom-0 left-0 right-0">
+            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto">
+                <path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" class="fill-gray-50 dark:fill-gray-900"/>
+            </svg>
         </div>
     </div>
 
-    <!-- Feature Section -->
-    <div class="py-12 bg-gray-50 dark:bg-gray-800">
+    <!-- Featured Projects Section -->
+    {% if featured_projects %}
+    <div class="bg-gray-50 dark:bg-gray-900 py-16 lg:py-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="lg:text-center">
-                <h2 class="text-base text-primary-600 dark:text-primary-400 font-semibold tracking-wide uppercase">核心功能</h2>
-                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
-                    一站式项目管理体验
-                </p>
-                <p class="mt-4 max-w-2xl text-xl text-gray-500 dark:text-gray-400 lg:mx-auto">
-                    项目部署到最终展示，数据库系统课程大作业展示平台 提供全流程支持。
+            <div class="text-center mb-12">
+                <span class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400">
+                    热门推荐
+                </span>
+                <h2 class="mt-4 text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
+                    精选项目
+                </h2>
+                <p class="mt-3 text-lg text-gray-500 dark:text-gray-400">
+                    发现最受欢迎的学生作品
                 </p>
             </div>
-
-            <div class="mt-10">
-                <dl class="space-y-10 md:space-y-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10">
-                    <div class="relative">
-                        <dt>
-                            <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-primary-500 text-white">
-                                <i class="fa-solid fa-users text-xl"></i>
-                            </div>
-                            <p class="ml-16 text-lg leading-6 font-medium text-gray-900 dark:text-white">工作组协作</p>
-                        </dt>
-                        <dd class="mt-2 ml-16 text-base text-gray-500 dark:text-gray-400">
-                            轻松创建或加入工作组，管理成员。确保项目管理安全便捷。
-                        </dd>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for project in featured_projects %}
+                <div class="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl overflow-hidden transition-shadow duration-300">
+                    <!-- Project Image -->
+                    <div class="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 overflow-hidden">
+                        {% set project_img = '/static/img/projects/' + project.pid + '.png' %}
+                        <img src="{{ project_img }}" 
+                             alt="{{ project.pname }}" 
+                             class="w-full h-full object-cover"
+                             onerror="this.src='/static/img/project.png';">
+                        <!-- Overlay on Hover -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <!-- Star Badge -->
+                        <div class="absolute top-3 right-3">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-400/90 text-yellow-900 shadow-sm backdrop-blur-sm">
+                                <i class="fa-solid fa-star mr-1.5"></i> {{ project.stars|length if project.stars else 0 }}
+                            </span>
+                        </div>
+                        <!-- Quick Access Button -->
+                        {% if project.port %}
+                        <a href="{{ external_url }}:{{ project.port }}" target="_blank" 
+                           class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 shadow-lg">
+                            <i class="fa-solid fa-external-link-alt mr-1.5"></i> 访问
+                        </a>
+                        {% endif %}
                     </div>
-
-                    <div class="relative">
-                        <dt>
-                            <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-primary-500 text-white">
-                                <i class="fa-solid fa-laptop-code text-xl"></i>
+                    
+                    <!-- Project Info -->
+                    <div class="p-5">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-1">
+                            <a href="{{ url_for('project.project_detail', pid=project.pid) }}" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                                {{ project.pname }}
+                            </a>
+                        </h3>
+                        
+                        <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4 min-h-[2.5rem]">
+                            {{ project.pinfo[:80] + '...' if project.pinfo and project.pinfo|length > 80 else (project.pinfo or '暂无描述') }}
+                        </p>
+                        
+                        <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+                            <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                <i class="fa-solid fa-users mr-1.5 text-primary-500"></i>
+                                <a href="{{ url_for('group.group_detail', gid=project.gid) }}" class="hover:text-primary-600 dark:hover:text-primary-400">
+                                    {{ project.group.gname }}
+                                </a>
                             </div>
-                            <p class="ml-16 text-lg leading-6 font-medium text-gray-900 dark:text-white">Web 终端</p>
-                        </dt>
-                        <dd class="mt-2 ml-16 text-base text-gray-500 dark:text-gray-400">
-                            集成的 Web 终端环境，支持 Docker 容器管理。直接在浏览器中进行代码调试和部署。
-                        </dd>
+                            <a href="{{ url_for('project.project_detail', pid=project.pid) }}" 
+                               class="inline-flex items-center text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
+                                详情
+                            </a>
+                        </div>
                     </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- View All Button -->
+            <div class="mt-12 text-center">
+                <a href="/project" class="inline-flex items-center px-6 py-3 rounded-xl text-base font-medium text-white bg-primary-600 hover:bg-primary-700 shadow-md hover:shadow-lg transition-all duration-200">
+                    查看全部 {{ total_projects }} 个项目
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="bg-gray-50 dark:bg-gray-900 py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="text-6xl text-gray-300 dark:text-gray-700 mb-6">
+                <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">暂无项目</h2>
+            <p class="text-gray-500 dark:text-gray-400 mb-8">成为第一个创建项目的人吧！</p>
+            {% if current_user.is_authenticated %}
+            <a href="/group/my_group" class="inline-flex items-center px-6 py-3 rounded-xl text-base font-medium text-white bg-primary-600 hover:bg-primary-700">
+                <i class="fa-solid fa-plus mr-2"></i> 创建项目
+            </a>
+            {% else %}
+            <a href="/auth/register" class="inline-flex items-center px-6 py-3 rounded-xl text-base font-medium text-white bg-primary-600 hover:bg-primary-700">
+                <i class="fa-solid fa-user-plus mr-2"></i> 注册账号
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 
-                    <div class="relative">
-                        <dt>
-                            <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-primary-500 text-white">
-                                <i class="fa-solid fa-images text-xl"></i>
-                            </div>
-                            <p class="ml-16 text-lg leading-6 font-medium text-gray-900 dark:text-white">项目展示</p>
-                        </dt>
-                        <dd class="mt-2 ml-16 text-base text-gray-500 dark:text-gray-400">
-                            便捷跳转项目展示，让用户轻松浏览和分享成果。
-                        </dd>
+    <!-- Feature Cards -->
+    <div class="bg-white dark:bg-gray-800 py-16 lg:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="relative p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100 dark:border-blue-800/30">
+                    <div class="w-14 h-14 rounded-xl bg-blue-500 flex items-center justify-center text-white text-2xl mb-5">
+                        <i class="fa-solid fa-users"></i>
                     </div>
-                </dl>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">组队协作</h3>
+                    <p class="text-gray-600 dark:text-gray-400">创建工作组，邀请队友一起开发和管理项目</p>
+                </div>
+                
+                <div class="relative p-8 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-100 dark:border-green-800/30">
+                    <div class="w-14 h-14 rounded-xl bg-green-500 flex items-center justify-center text-white text-2xl mb-5">
+                        <i class="fa-solid fa-terminal"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">在线终端</h3>
+                    <p class="text-gray-600 dark:text-gray-400">浏览器内直接访问 Docker 容器，随时随地调试</p>
+                </div>
+                
+                <div class="relative p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-100 dark:border-purple-800/30">
+                    <div class="w-14 h-14 rounded-xl bg-purple-500 flex items-center justify-center text-white text-2xl mb-5">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">一键部署</h3>
+                    <p class="text-gray-600 dark:text-gray-400">项目上线后自动获得公网访问地址，轻松分享</p>
+                </div>
             </div>
         </div>
     </div>
