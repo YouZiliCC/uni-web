@@ -56,7 +56,7 @@
                                 </a>
                             </h3>
                             <div class="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400 flex-1">
-                                <p class="line-clamp-3">{{ project.description or '暂无描述' }}</p>
+                                <p class="line-clamp-3">{{ project.pinfo[:80] + '...' if project.pinfo and project.pinfo|length > 80 else (project.pinfo or '暂无描述') }}</p>
                             </div>
                             <div class="mt-4 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
                                 <div class="flex items-center">

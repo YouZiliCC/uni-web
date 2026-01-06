@@ -81,7 +81,7 @@
                         </div>
                         <div class="bg-gray-50 dark:bg-gray-700 px-4 py-4 sm:px-6 flex justify-between items-center">
                             <a href="{{ url_for('group.group_detail', gid=group.gid) }}" class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300">
-                                查看详情 <span aria-hidden="true">&rarr;</span>
+                                查看详情
                             </a>
                             {% if current_user.is_authenticated and not current_user.gid %}
                                 {% if group.gid in user_applications %}
